@@ -47,6 +47,12 @@ external_data:
   k8s_apiserver:
     path: secret/ci
     name: k8s_apiserver
+  docker_username:
+    path: secret/ci
+    name: docker_username
+  docker_password:
+    path: secret/ci
+    name: docker_password
 --- 
 kind: pipeline
 name: switch
