@@ -16,7 +16,7 @@ steps:
     image: risla8/drone
     commands:
       - /kube.sh
-      - helm upgrade --install frontend --namespace default ./frontend --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
+      - helm upgrade --install frontend --namespace default ./frontend --reuse-values --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
     environment:
       KUBERNETES_NAMESPACE:
         from_secret: k8s_ns
@@ -63,7 +63,7 @@ steps:
     image: risla8/drone
     commands:
       - /kube.sh
-      - helm upgrade --install frontend ./frontend --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
+      - helm upgrade --install frontend ./frontend --reuse-values --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
     environment:
       KUBERNETES_NAMESPACE:
         from_secret: k8s_ns
