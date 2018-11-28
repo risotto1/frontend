@@ -76,4 +76,4 @@ steps:
 
 trigger:
   event:
-    - rollback
+    - promote
