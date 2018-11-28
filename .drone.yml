@@ -2,30 +2,33 @@ kind: pipeline
 name: staging
 
 steps:
-  - name: publish
-    image: plugins/docker
-    settings:
-      repo: risla8/poc
-      tags:  ${DRONE_COMMIT_SHA:0:8}
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
+  # - name: publish
+  #   image: plugins/docker
+  #   settings:
+  #     repo: risla8/poc
+  #     tags:  ${DRONE_COMMIT_SHA:0:8}
+  #     username:
+  #       from_secret: docker_username
+  #     password:
+  #       from_secret: docker_password
 
   - name: deploy
     image: risla8/drone
     commands:
-      - /kube.sh
-      - helm upgrade --install frontend --namespace default ./frontend --reuse-values --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
+      - env | grep -i "kubernetes"
+      # - /kube.sh
+      # - helm upgrade --install frontend --namespace default ./frontend --reuse-values --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
     environment:
       KUBERNETES_NAMESPACE:
         from_secret: k8s_ns
-      KUBERNETES_TOKEN:
-        from_secret: k8s_token
-      KUBERNETES_CA:
-        from_secret: k8s_ca
-      KUBERNETES_APISERVER:
-        from_secret: k8s_apiserver
+      # KUBERNETES_NAMESPACE:
+      #   from_secret: k8s_ns
+      # KUBERNETES_TOKEN:
+      #   from_secret: k8s_token
+      # KUBERNETES_CA:
+      #   from_secret: k8s_ca
+      # KUBERNETES_APISERVER:
+      #   from_secret: k8s_apiserver
 
 trigger:
   event:
@@ -33,6 +36,13 @@ trigger:
   branch:
     - master
 ---
+kind: secret
+
+external_data:
+  k8s_ns:
+    path: secret/ci
+    name: kubernetes_namespace
+--- 
 kind: pipeline
 name: switch
 
