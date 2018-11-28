@@ -51,6 +51,9 @@ steps:
       KUBERNETES_APISERVER:
         from_secret: k8s_apiserver
       HELM_CHART_DIR: "./frontend"
+    when:
+      target:
+        - switch
 trigger:
   event:
     - promote
@@ -73,6 +76,9 @@ steps:
         from_secret: k8s_ca
       KUBERNETES_APISERVER:
         from_secret: k8s_apiserver
+      when:
+        target:
+          - staging-rollback
 
 trigger:
   event:
