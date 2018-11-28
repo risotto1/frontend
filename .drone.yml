@@ -11,10 +11,6 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-    branch:
-      - master
-    event:
-      - push
 
   - name: deploy
     image: risla8/drone
@@ -30,11 +26,12 @@ steps:
         from_secret: k8s_ca
       KUBERNETES_APISERVER:
         from_secret: k8s_apiserver
-    when:
-      branch:
-        - master
-      event:
-        - push
+
+trigger:
+  event:
+    - push
+  branch:
+    - master
 ---
 kind: pipeline
 name: switch
@@ -56,10 +53,11 @@ steps:
         from_secret: k8s_apiserver
       HELM_CHART_DIR: "./frontend"
     when:
-      event:
-        - promote
       target:
         - switch
+trigger:
+  event:
+    - promote
 ---
 kind: pipeline
 name: staging-rollback
@@ -80,7 +78,8 @@ steps:
       KUBERNETES_APISERVER:
         from_secret: k8s_apiserver
     when:
-      event:
-        - promote
       target:
         - rollback
+trigger:
+  event:
+    - promote
