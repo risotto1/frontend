@@ -1,0 +1,79 @@
+kind: pipeline
+name: staging
+
+steps:
+  - name: publish
+    image: plugins/docker
+    settings:
+      repo: risla8/poc
+      tags:  ${DRONE_COMMIT_SHA:0:8}
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+
+  - name: deploy
+    image: risla8/drone
+    commands:
+      - /kube.sh
+      - helm upgrade --install frontend ./frontend --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
+    environment:
+      KUBERNETES_NAMESPACE:
+        from_secret: k8s_ns
+      KUBERNETES_TOKEN:
+        from_secret: k8s_token
+      KUBERNETES_CA:
+        from_secret: k8s_ca
+      KUBERNETES_APISERVER:
+        from_secret: k8s_apiserver
+trigger:
+  branch:
+    - master
+  event:
+    - push
+---
+kind: pipeline
+name: switch
+
+steps:
+  - name: blue-green-switch
+    image: risla8/drone
+    commands:
+      - /kube.sh
+      - ./scripts/switchdeploy.sh deploy
+    environment:
+      KUBERNETES_NAMESPACE:
+        from_secret: k8s_ns
+      KUBERNETES_TOKEN:
+        from_secret: k8s_token
+      KUBERNETES_CA:
+        from_secret: k8s_ca
+      KUBERNETES_APISERVER:
+        from_secret: k8s_apiserver
+      HELM_CHART_DIR: "./frontend"
+trigger:
+  event:
+    - promote
+---
+kind: pipeline
+name: staging-rollback
+
+steps:
+  - name: rollback
+    image: risla8/drone
+    commands:
+      - /kube.sh
+      - helm upgrade --install frontend ./frontend --set $(./scripts/switchdeploy.sh).image.tag=${DRONE_COMMIT_SHA:0:8}
+    environment:
+      KUBERNETES_NAMESPACE:
+        from_secret: k8s_ns
+      KUBERNETES_TOKEN:
+        from_secret: k8s_token
+      KUBERNETES_CA:
+        from_secret: k8s_ca
+      KUBERNETES_APISERVER:
+        from_secret: k8s_apiserver
+
+trigger:
+  event:
+    - rollback
