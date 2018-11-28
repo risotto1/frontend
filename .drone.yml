@@ -33,27 +33,6 @@ trigger:
   branch:
     - master
 ---
-kind: secret
-external_data:
-  k8s_ns:
-    path: secret/ci
-    name: k8s_ns
-  k8s_token:
-    path: secret/ci
-    name: k8s_token
-  k8s_ca:
-    path: secret/ci
-    name: k8s_ca
-  k8s_apiserver:
-    path: secret/ci
-    name: k8s_apiserver
-  docker_username:
-    path: secret/ci
-    name: docker_username
-  docker_password:
-    path: secret/ci
-    name: docker_password
---- 
 kind: pipeline
 name: switch
 
@@ -104,3 +83,24 @@ steps:
 trigger:
   event:
     - promote
+---
+kind: secret
+external_data:
+  k8s_ns:
+    path: secret/ci
+    name: k8s_ns
+  k8s_token:
+    path: secret/ci
+    name: k8s_token
+  k8s_ca:
+    path: secret/ci
+    name: k8s_ca
+  k8s_apiserver:
+    path: secret/ci
+    name: k8s_apiserver
+  docker_username:
+    path: secret/ci
+    name: docker_username
+  docker_password:
+    path: secret/ci
+    name: docker_password
