@@ -1,5 +1,5 @@
 kind: pipeline
-name: staging
+name: master
 
 steps:
   - name: publish
@@ -100,7 +100,7 @@ steps:
         from_secret: k8s_apiserver
     when:
       target:
-        - rollback
+        - staging-rollback
 trigger:
   event:
     - promote
