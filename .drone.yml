@@ -35,7 +35,6 @@ trigger:
 ---
 kind: pipeline
 name: switch
-
 steps:
   - name: blue-green-switch
     image: risla8/drone
@@ -87,20 +86,20 @@ trigger:
 kind: secret
 external_data:
   k8s_ns:
-    path: secret/ci
+    path: kv/ci
     name: k8s_ns
   k8s_token:
-    path: secret/ci
+    path: kv/ci
     name: k8s_token
   k8s_ca:
-    path: secret/ci
+    path: kv/ci
     name: k8s_ca
   k8s_apiserver:
-    path: secret/ci
+    path: kv/ci
     name: k8s_apiserver
   docker_username:
-    path: secret/ci
+    path: kv/ci
     name: docker_username
   docker_password:
-    path: secret/ci
+    path: kv/ci
     name: docker_password
